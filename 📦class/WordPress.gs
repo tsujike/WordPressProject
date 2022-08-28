@@ -1,52 +1,3 @@
-//https://script.google.com/u/0/home/projects/1Ux-Nl2126IhXGZ-802SURs2qr_62w4PZlWffdHRJ7LTAzJdCV8Wqd6u3/edit
-function testTagCategory() {
-  const wordPress = new WordPress()
-  console.log(wordPress.getTagIdList(["未分類", "ニュース"]))
-  console.log(wordPress.getCategoryIdList(["未分類", "ニュース"]))
-}
-
-function testWPPOST() {
-  const wordPress = new WordPress()
-  //title, content, date, status, postId, slug, tagList, categoryList, featured_media, isSticky = false
-  const date = Utilities.formatDate(new Date(), 'Asia/Tokyo', "yyyy-MM-dd'T'HH:mm:ss'+09:00'")
-  console.log(wordPress.post("タイトル", "content", date, "draft", "", "", ["未分類"], ["未分類"], "", false))
-
-}
-function testWPImage() {
-  const wordPress = new WordPress()
-  const imageUrl = "https://www.google.com/images/branding/googlelogo/1x/googlelogo_light_color_272x92dp.png"
-  const fileName = "google.png"
-  const resObject = wordPress.postImagebyUrl(imageUrl, fileName)
-  Logger.log(wordPress.postImagebyUrl(imageUrl, fileName))
-  const id = resObject["id"]
-  const url = resObject.source_url
-  console.log(id)
-  console.log(url)
-}
-
-
-/**
- *  WordPressEntry クラスをまず呼び出す｡
- *  投稿するときには そこから生成された､オブジェクトを渡す｡
- */
-function testEntryClass() {
-  const postDate = Utilities.formatDate(new Date(), 'Asia/Tokyo', "yyyy-MM-dd'T'HH:mm:ss'+09:00'")
-
-
-  const wordPressValueObject = {
-    'title': "タイトル",
-    'content': "content",
-    'status': "draft",
-    'slug': "",
-  }
-
-  const wordPressValueClass = new WordPressPostValue(wordPressValueObject)
-  console.log()
-
-
-}
-
-
 class WordPress {
   /**
    * @param {WordPressPostValue} - wordPressPostValue ワードプレスに投稿するために必要なパラメータを入力するvalueObject
@@ -198,136 +149,56 @@ class WordPress {
   }
 }
 
-class WordPressPostValue {
-  /**
-   * @param {object} - 
-   * 分割代入でオブジェクトを受け取る
-   */
-  constructor({
-    title,
-    content,
-    date,
-    status = "draft",
-    postId = "",
-    slug,
-    tagList = [],
-    categoryList = [],
-    featured_media = "",
-    isSticky = false
-  }) {
 
-    // バリデーション
-    if (Array.isArray(tagList) === false) throw "tagList は配列で指定してください"
-    if (Array.isArray(categoryList) === false) throw "categoryList は配列で指定してください"
-    if (["publish", "future", "draft", "pending", "private"].includes(status) === false) throw "statusはpublish, future, draft, pending, privateを指定してください"
 
-    this.baseUrl = PropertiesService.getScriptProperties().getProperty("WP_SITE_URL");
-    this.userName = PropertiesService.getScriptProperties().getProperty("WP_USER_NAME");
-    this.pass = PropertiesService.getScriptProperties().getProperty("WP_ACCESS_TOKEN");
 
-    this.wordPressValueObject = {
-      title: title,
-      content: content,
-      date: date,
-      status: status,
-      postId: postId,
-      slug: slug,
-      tagList: tagList,
-      categoryList: categoryList,
-      featured_media: featured_media,
-      isSticky: isSticky,
-    }
-  }
 
-  /**
-   * 
-   * @return {}
-   */
-  getPayload() {
-    return this.wordPressValueObject
-  }
-  getBaseUrl(){
 
-  }
+
+//https://script.google.com/u/0/home/projects/1Ux-Nl2126IhXGZ-802SURs2qr_62w4PZlWffdHRJ7LTAzJdCV8Wqd6u3/edit
+function testTagCategory() {
+  const wordPress = new WordPress()
+  console.log(wordPress.getTagIdList(["未分類", "ニュース"]))
+  console.log(wordPress.getCategoryIdList(["未分類", "ニュース"]))
+}
+
+function testWPPOST() {
+  const wordPress = new WordPress()
+  //title, content, date, status, postId, slug, tagList, categoryList, featured_media, isSticky = false
+  const date = Utilities.formatDate(new Date(), 'Asia/Tokyo', "yyyy-MM-dd'T'HH:mm:ss'+09:00'")
+  console.log(wordPress.post("タイトル", "content", date, "draft", "", "", ["未分類"], ["未分類"], "", false))
+
+}
+function testWPImage() {
+  const wordPress = new WordPress()
+  const imageUrl = "https://www.google.com/images/branding/googlelogo/1x/googlelogo_light_color_272x92dp.png"
+  const fileName = "google.png"
+  const resObject = wordPress.postImagebyUrl(imageUrl, fileName)
+  Logger.log(wordPress.postImagebyUrl(imageUrl, fileName))
+  const id = resObject["id"]
+  const url = resObject.source_url
+  console.log(id)
+  console.log(url)
 }
 
 
-
-
-
-
-
-
-
-function testCodic() {
-  const codic = new Codic()
-  const name = "未分類"
-  Logger.log(codic.get(name))
-  Logger.log(codic.showProjectId())
-
-}
-//https://codic.jp/my/api_status
 /**
- * 
- * Note : https://codic.jp/my/api_status
+ *  WordPressEntry クラスをまず呼び出す｡
+ *  投稿するときには そこから生成された､オブジェクトを渡す｡
  */
-class Codic {
-  constructor() {
-    this.baseUrl = "https://api.codic.jp"
-    this.token = PropertiesService.getScriptProperties().getProperty("CODIC_TOKEN");
-    this.projectId = PropertiesService.getScriptProperties().getProperty("CODIC_PROJECT_ID");
-  }
-  /**
-   * 
-   */
-  get(text) {
-    const url = this.baseUrl + "/v1/engine/translate.json"
-    const payload = {
-      text: text,
-      project_id: this.projectId,
-      casing: "lower underscore",
-      acronym_style: "camel strict"
-    }
-    const options = this.getOptions_(payload)
-    const response = UrlFetchApp.fetch(url, options);
-    const resObject = JSON.parse(response.getContentText());
-    const translatedText = resObject[0].translated_text
-    return translatedText
-  }
-  /**
-   * 
-   */
-  showProjectId() {
-    const url = this.baseUrl + "/v1/user_projects.json"
-    const payload = {
+function testEntryClass() {
+  const postDate = Utilities.formatDate(new Date(), 'Asia/Tokyo', "yyyy-MM-dd'T'HH:mm:ss'+09:00'")
 
-    }
-    const options = this.getOptions_(payload)
-    const response = UrlFetchApp.fetch(url, options);
-    const resObject = JSON.parse(response.getContentText());
-    return resObject
+
+  const wordPressValueObject = {
+    'title': "タイトル",
+    'content': "content",
+    'status': "draft",
+    'slug': "",
   }
 
-  /**
-   * 
-   */
-  getOptions_(payload) {
+  const wordPressValueClass = new WordPressPostValue(wordPressValueObject)
+  console.log()
 
-    const options = {
-      'method': "POST",
-      'headers': { Authorization: ` Bearer ${this.token}` },
-      'payload': payload,
-      'muteHttpExceptions': true
-    };
-    return options
-  }
+
 }
-
-
-
-
-
-
-
-
-
